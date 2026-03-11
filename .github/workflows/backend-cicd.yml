@@ -27,6 +27,10 @@ jobs:
           pip install boto3 pytest mock
       # Step D: RUN TESTS 
       - name: Run Tests
+        env:
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_ACCESS_KEY_ID: testing
+          AWS_SECRET_ACCESS_KEY: testing
         run: |
           cd Backend
           python test_lambda.py
