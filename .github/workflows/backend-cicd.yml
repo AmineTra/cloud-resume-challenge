@@ -1,0 +1,51 @@
+name: Deploy Backend
+on:
+  push:
+    branches: 
+      - main
+    path:
+      - 'Backend/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Step A: Get your code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step B: Set up pyhon 3.9
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # Step C: Install tools 
+      - name: Install AWS CLI
+        run: |
+          python -m pip install --upgrade pip
+          pip install boto3 pytest mock
+      # Step D: RUN TESTS 
+      - name: Run Tests
+        run: |
+          cd Backend
+          python test_lambda.py
+      ## Step E: Zip the code
+      - name: Zip Lambda Code
+        run: |
+          cd Backend
+          # Zip everything EXCEPT junk files and the test file itself
+          zip -r lambda.zip . -x "*.pyc" -x "__pycache__" -x "test_lambda.py"
+      
+      # Step F: Log in to AWS
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AKIAXRKA6LSAZT7KB77D }}
+          aws-secret-access-key: ${{ secrets.+wWLRfW5ZH+5jkXdlO9kGe25j5t4WCT3Kya2UU2O }}
+          aws-region: us-east-1
+
+      # BLOCK 3: THE DEPLOY
+      - name: Update Lambda Code
+        run: |
+          aws lambda update-function-code --function-name update_visitor_count --zip-file fileb://Backend/lambda.zip
