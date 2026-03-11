@@ -41,9 +41,11 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AKIAXRKA6LSAZT7KB77D }}
-          aws-secret-access-key: ${{ secrets.+wWLRfW5ZH+5jkXdlO9kGe25j5t4WCT3Kya2UU2O }}
+          # We use the NAME of the secret variable, NOT the key itself
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+
 
       # BLOCK 3: THE DEPLOY
       - name: Update Lambda Code
